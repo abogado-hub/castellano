@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b0c" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Menú · Chef Jesús</title>
+
+  <!-- Tipografías: Cormorant (títulos elegantes) + Montserrat (texto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===================== VISTA: MENÚ (CLIENTE) ===================== -->
+  <div id="vista-menu" class="vista">
+
+    <header class="hero">
+      <div class="hero-adorno">✦</div>
+      <p class="hero-pre">Restaurante</p>
+      <h1 class="hero-titulo" id="nombre-restaurante">Chef Jesús</h1>
+      <p class="hero-lema" id="lema-restaurante">Cocina de autor</p>
+      <div class="linea-dorada"></div>
+    </header>
+
+    <!-- Barra de secciones fija al hacer scroll -->
+    <nav class="nav-secciones" id="nav-secciones" aria-label="Secciones del menú"></nav>
+
+    <div class="buscador-wrap">
+      <input type="search" id="buscador" class="buscador" placeholder="Buscar un platillo…" autocomplete="off" />
+    </div>
+
+    <main id="contenedor-menu" class="contenedor-menu">
+      <div class="cargando">Cargando menú…</div>
+    </main>
+
+    <footer class="pie">
+      <div class="linea-dorada"></div>
+      <p>Precios en pesos mexicanos, IVA incluido.</p>
+      <button class="link-admin" id="btn-ir-admin">Administración</button>
+    </footer>
+  </div>
+
+  <!-- ===================== VISTA: ADMINISTRACIÓN ===================== -->
+  <div id="vista-admin" class="vista oculto">
+
+    <!-- Pantalla de acceso con PIN -->
+    <section id="admin-login" class="admin-login">
+      <div class="login-caja">
+        <div class="hero-adorno">✦</div>
+        <h2>Panel de administración</h2>
+        <p>Ingresa el PIN para editar el menú</p>
+        <form id="form-login">
+          <input type="password" id="input-pin" class="input input-pin" inputmode="numeric" placeholder="PIN" autocomplete="off" required />
+          <button type="submit" class="btn btn-oro btn-bloque">Entrar</button>
+        </form>
+        <p class="error" id="login-error"></p>
+        <button class="link-admin" id="btn-volver-menu-1">← Volver al menú</button>
+      </div>
+    </section>
+
+    <!-- Panel (se muestra después del PIN) -->
+    <section id="admin-panel" class="admin-panel oculto">
+      <header class="admin-header">
+        <div>
+          <p class="hero-pre">Administración</p>
+          <h2 class="admin-titulo">Editor del menú</h2>
+        </div>
+        <div class="admin-header-acciones">
+          <button class="btn btn-borde" id="btn-ver-menu">Ver menú</button>
+          <button class="btn btn-borde" id="btn-salir">Salir</button>
+        </div>
+      </header>
+
+      <div class="tabs">
+        <button class="tab activa" data-tab="platillos">Platillos</button>
+        <button class="tab" data-tab="secciones">Secciones</button>
+        <button class="tab" data-tab="ajustes">Ajustes</button>
+      </div>
+
+      <!-- Pestaña Platillos -->
+      <div class="tab-contenido" id="tab-platillos">
+        <div class="barra-acciones">
+          <select id="filtro-seccion" class="input"></select>
+          <button class="btn btn-oro" id="btn-nuevo-platillo">+ Nuevo platillo</button>
+        </div>
+        <div id="lista-platillos" class="lista-admin"></div>
+      </div>
+
+      <!-- Pestaña Secciones -->
+      <div class="tab-contenido oculto" id="tab-secciones">
+        <div class="barra-acciones">
+          <p class="nota">Las secciones agrupan los platillos (ej. Entradas, Ensaladas, Postres).</p>
+          <button class="btn btn-oro" id="btn-nueva-seccion">+ Nueva sección</button>
+        </div>
+        <div id="lista-secciones" class="lista-admin"></div>
+      </div>
+
+      <!-- Pestaña Ajustes -->
+      <div class="tab-contenido oculto" id="tab-ajustes">
+        <div class="tarjeta-ajustes">
+          <h3>Cambiar PIN</h3>
+          <form id="form-pin">
+            <input type="password" id="pin-nuevo" class="input" placeholder="Nuevo PIN (mín. 4)" required />
+            <input type="password" id="pin-confirma" class="input" placeholder="Confirmar PIN" required />
+            <button type="submit" class="btn btn-oro">Guardar PIN</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===================== MODAL: DETALLE DEL PLATILLO ===================== -->
+  <div class="modal-fondo oculto" id="modal-detalle">
+    <div class="modal">
+      <button class="modal-cerrar" data-cerrar aria-label="Cerrar">×</button>
+      <div class="modal-foto" id="detalle-foto"></div>
+      <div class="modal-cuerpo">
+        <p class="hero-pre" id="detalle-seccion"></p>
+        <h3 id="detalle-nombre"></h3>
+        <p class="detalle-precio" id="detalle-precio"></p>
+        <div class="linea-dorada corta"></div>
+        <p id="detalle-descripcion"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CAJÓN: FORMULARIO PLATILLO ===================== -->
+  <div class="cajon-fondo oculto" id="cajon-platillo">
+    <aside class="cajon">
+      <header class="cajon-header">
+        <h3 id="titulo-form-platillo">Nuevo platillo</h3>
+        <button class="modal-cerrar" data-cerrar aria-label="Cerrar">×</button>
+      </header>
+      <form id="form-platillo" class="cajon-cuerpo">
+        <label>Nombre<input id="p-nombre" class="input" required maxlength="80" /></label>
+        <label>Sección<select id="p-seccion" class="input" required></select></label>
+        <label>Precio (MXN)<input id="p-precio" class="input" type="number" min="0" step="0.5" required /></label>
+        <label>Descripción<textarea id="p-descripcion" class="input" rows="3" maxlength="300"></textarea></label>
+
+        <div class="campo-foto">
+          <span>Foto del platillo</span>
+          <div class="vista-previa" id="p-vista-previa"><span>Sin foto</span></div>
+          <div class="fila">
+            <label class="btn btn-borde btn-chico">Subir foto<input type="file" id="p-archivo" accept="image/*" hidden /></label>
+            <button type="button" class="btn btn-borde btn-chico" id="p-quitar-foto">Quitar</button>
+          </div>
+          <input id="p-foto-url" class="input" placeholder="…o pega la URL de una imagen" />
+        </div>
+
+        <label>Orden dentro de la sección<input id="p-orden" class="input" type="number" value="0" /></label>
+        <label class="check"><input type="checkbox" id="p-disponible" checked /> Disponible</label>
+        <label class="check"><input type="checkbox" id="p-destacado" /> Recomendación del chef</label>
+
+        <div class="cajon-acciones">
+          <button type="button" class="btn btn-borde" data-cerrar>Cancelar</button>
+          <button type="submit" class="btn btn-oro" id="btn-guardar-platillo">Guardar</button>
+        </div>
+      </form>
+    </aside>
+  </div>
+
+  <!-- ===================== CAJÓN: FORMULARIO SECCIÓN ===================== -->
+  <div class="cajon-fondo oculto" id="cajon-seccion">
+    <aside class="cajon">
+      <header class="cajon-header">
+        <h3 id="titulo-form-seccion">Nueva sección</h3>
+        <button class="modal-cerrar" data-cerrar aria-label="Cerrar">×</button>
+      </header>
+      <form id="form-seccion" class="cajon-cuerpo">
+        <label>Nombre<input id="s-nombre" class="input" required maxlength="50" placeholder="Ej. Ensaladas" /></label>
+        <label>Descripción corta<input id="s-descripcion" class="input" maxlength="100" placeholder="Ej. Frescas y de temporada" /></label>
+        <label>Orden en el menú<input id="s-orden" class="input" type="number" value="0" /></label>
+        <label class="check"><input type="checkbox" id="s-activo" checked /> Visible en el menú</label>
+        <div class="cajon-acciones">
+          <button type="button" class="btn btn-borde" data-cerrar>Cancelar</button>
+          <button type="submit" class="btn btn-oro">Guardar</button>
+        </div>
+      </form>
+    </aside>
+  </div>
+
+  <!-- Aviso flotante -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Librería de Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
